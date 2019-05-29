@@ -1,0 +1,27 @@
+CREATE DEFINER=`root`@`localhost` TRIGGER `actualizar_empleados` BEFORE INSERT ON `empleados` FOR EACH ROW BEGIN
+	declare n_oficina int;
+    declare n_oficina_nss int;
+    declare valor_nss int;
+    declare nacimiento int;
+    declare inscripcion int;
+    declare nss_n bigint;
+    
+    set n_oficina=floor(rand()*100);
+    set n_oficina_nss=concat(n_oficina);
+    if n_oficina<10 then
+			set n_oficina_nss=concat('0',n_oficina);
+    end if;
+    
+    set new.oficina=n_oficina_nss;
+    
+    set valor_nss=(select consecutivo from consecutivos order by consecutivo desc limit 1)+1;
+    set new.valor=valor_nss;
+    set nacimiento=new.ano_nacimiento;
+    set inscripcion=new.ani_inscripcion;
+    
+    set new.digito=(select digito_verificador(n_oficina_nss,inscripcion,nacimiento,valor_nss));
+    
+    set nss_n=(select genera_nss(n_oficina_nss,nacimiento,inscripcion));
+    set new.nss=nss_n;
+    insert into consecutivos values(valor_nss);
+END

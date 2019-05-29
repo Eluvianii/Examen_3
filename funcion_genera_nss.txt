@@ -1,0 +1,11 @@
+CREATE DEFINER=`root`@`localhost` FUNCTION `genera_nss`(oficina int,nacimiento year, inscripcion year) RETURNS bigint(11)
+BEGIN
+	declare valor int;
+    declare nss bigint;
+    
+    set valor=(select consecutivo from consecutivos order by consecutivo desc limit 1)+1;
+    
+    set nss=(concat(oficina,right(inscripcion,2),right(nacimiento,2),valor,(select digito_verificador(oficina, inscripcion,  nacimiento, valor))));
+    
+RETURN nss;
+END

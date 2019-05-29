@@ -1,0 +1,46 @@
+CREATE DEFINER=`root`@`localhost` FUNCTION `digito_verificador`(n_oficina int, n_ani_inscripcion int, n_ano_nacimiento int, n_valor int) RETURNS int(11)
+BEGIN
+	declare right_oficina int;
+    declare right_inscripcion int;
+    declare right_nacimiento int;
+    declare right_valor_1 int;
+    declare right_valor_2 int;
+    declare left_valor int;
+    declare final int;
+    
+    set right_oficina=right(n_oficina,1)*2;
+    if right_oficina>9 then
+		set right_oficina=left(right_oficina,1)+right(right_oficina,1);
+	end if;
+    
+    set right_inscripcion=right(n_ani_inscripcion,1)*2;
+    if right_inscripcion>9 then
+		set right_inscripcion=left(right_inscripcion,1)+right(right_inscripcion,1);
+	end if;
+    
+    set right_nacimiento=right(n_ano_nacimiento,1)*2;
+    if right_nacimiento>9 then
+		set right_nacimiento=left(right_nacimiento,1)+right(right_nacimiento,1);
+	end if;
+    
+    set left_valor=mid(n_valor,3,1);
+    
+    set right_valor_1=mid(n_valor,2,1)*2;
+    if right_valor_1>9 then
+		set right_valor_1=left(right_valor_1,1)+right(right_valor_1,1);
+	end if;
+    
+    set right_valor_2=right(n_valor,1)*2;
+    if right_valor_2>9 then
+		set right_valor_2=left(right_valor_2,1)+right(right_valor_2,1);
+	end if;
+    
+    set final=left(n_oficina,1)+right_oficina+left(n_ani_inscripcion,1)+right_inscripcion+left(n_ano_nacimiento,1)+right_nacimiento+left(n_valor,1)+right_valor_1+right_valor_2+left_valor;
+    set final=(final%10)-10;
+    set final=-final;
+    if final=10 then
+    set final=0;
+    end if;
+    
+RETURN final;
+END
